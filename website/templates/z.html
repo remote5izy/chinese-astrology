@@ -653,9 +653,10 @@
           const mainStar = mainStarMatch.map((match) =>
             match.replace(/星$/, "")
           );
-          document.getElementById("center").innerText += mainStar + "坐命"; //這句可以拿去朋友圈
-        } else {
-          document.getElementById("center").innerText += " 命宮無主星";
+          const a = mainStar + "坐命";
+          document.getElementById("center").innerHTML += `<a href="https://www.google.com/search?q=${mainStar}坐命" target="_blank">${a}</a>`;
+                  } else {
+          document.getElementById("center").innerHTML += `<a href="https://www.google.com/search?q=命宮無主星" target="_blank">命宮無主星</a>`;
         }
       }
       let x;
