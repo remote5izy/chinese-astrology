@@ -1,1049 +1,923 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>紫微斗數</title>
 
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        background-color: white;
-        margin: 0;
-        padding: 20px;
-        text-align: center;
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>紫微斗數</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: white;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 80%;
+      margin: 20px auto;
+    }
+
+    table,
+    th,
+    td {
+      border: 1px solid #ddd;
+    }
+
+    th,
+    td {
+      padding: 10px;
+      text-align: center;
+    }
+
+    th {
+      background-color: #4caf50;
+      color: white;
+    }
+
+    input {
+      padding: 1px;
+      font-size: 16px;
+    }
+
+    .house {
+      background-color: #f0f0f0;
+      /* 背景色 */
+      color: #333;
+      /* 文字顏色 */
+      padding: 10px;
+      /* 內邊距 */
+      border: 1px solid #ccc;
+      /* 邊框 */
+      font-family: "Arial", sans-serif;
+      /* 字体 */
+      font-size: 16px;
+      /* 字体大小 */
+      font-weight: bold;
+      /* 字体粗细 */
+      /* 其他樣式屬性可以根據需要添加 */
+    }
+
+    .center {
+      font-size: 24px;
+      /* 大一點的字體大小 */
+      font-weight: bold;
+      /* 字體加粗 */
+      color: #ff5733;
+      /* 鮮艷的橙色文字顏色 */
+      /* 其他樣式屬性可以根據需要添加 */
+    }
+  </style>
+</head>
+
+<body>
+  <h1>簡易紫微斗數命盤</h1>
+
+  <div class="col-md-5">
+    輸入農曆出生日期：<br /><br />
+    <form id="calculatorForm">
+      <label for="year"></label>
+      <input type="number" id="year" min="1804" max="2100" style="width: 100px" value="2002" required />
+      年
+      <label for="month"></label>
+      <input type="number" id="month" min="1" max="12" style="width: 100px" value="8" required />
+      月
+      <label for="day"></label>
+      <input type="number" id="day" min="1" max="30" style="width: 100px" value="16" required />
+      日
+      <select class="form-select" id="hour" required>
+        <option value="1">子</option>
+        <option value="2" selected>丑</option>
+        <option value="3">寅</option>
+        <option value="4">卯</option>
+        <option value="5">辰</option>
+        <option value="6">巳</option>
+        <option value="7">午</option>
+        <option value="8">未</option>
+        <option value="9">申</option>
+        <option value="10">酉</option>
+        <option value="11">戌</option>
+        <option value="0">亥</option>
+      </select>
+      時
+    </form>
+  </div>
+  <br />
+  <button onclick="calculateFate()">算命</button>
+  <br /><br />
+  <div id="result">結果</div>
+  <table>
+    <tr>
+      <td class="house" id="house6">6</td>
+      <td class="house" id="house7">7</td>
+      <td class="house" id="house8">8</td>
+      <td class="house" id="house9">9</td>
+    </tr>
+    <tr>
+      <td class="house" id="house5">5</td>
+      <td colspan="2" rowspan="2" class="center" id="center"></td>
+      <td class="house" id="house10">10</td>
+    </tr>
+    <tr>
+      <td class="house" id="house4">4</td>
+      <td class="house" id="house11">11</td>
+    </tr>
+    <tr>
+      <td class="house" id="house3">3</td>
+      <td class="house" id="house2">2</td>
+      <td class="house" id="house1">1</td>
+      <td class="house" id="house0">12</td>
+    </tr>
+  </table>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+    crossorigin="anonymous"></script>
+  <script>
+    function calculateFate() {
+      // const result = document.getElementById("result");
+      // result.innerHTML = "";
+
+      const elements = document.querySelectorAll(".house");
+      const centerElement = document.getElementById("center");
+
+      // 将 NodeList 转换为数组，然后将 centerElement 添加到数组中
+      const elementsArray = Array.from(elements);
+      elementsArray.push(centerElement);
+
+      for (const element of elementsArray) {
+        element.innerHTML = "";
       }
 
-      table {
-        border-collapse: collapse;
-        width: 80%;
-        margin: 20px auto;
-      }
+      const year = document.getElementById("year").value;
+      const month = document.getElementById("month").value; // 月份是從 0 開始的，所以要加 1
+      const day = document.getElementById("day").value;
+      const dropdown = document.getElementById("hour");
+      const selectedHour = dropdown.options[dropdown.selectedIndex].value;
+      const heavenlyStem = (year - 1803) % 10;
+      const earthlyBranch = (year - 1803) % 12;
+      const heavenlyStemList = [
+        "癸",
+        "甲",
+        "乙",
+        "丙",
+        "丁",
+        "戊",
+        "己",
+        "庚",
+        "辛",
+        "壬",
+      ]; //0~9
+      const earthlyBranchList = [
+        "亥",
+        "子",
+        "丑",
+        "寅",
+        "卯",
+        "辰",
+        "巳",
+        "午",
+        "未",
+        "申",
+        "酉",
+        "戌",
+      ]; //0~11
+      console.log(
+        "用户选择的年天干是：" +
+        heavenlyStemList[heavenlyStem] +
+        " " +
+        heavenlyStem
+      );
+      console.log(
+        "用户选择的年地支是：" +
+        earthlyBranchList[earthlyBranch] +
+        " " +
+        earthlyBranch
+      );
+      console.log("用户选择的月是：" + month);
+      console.log("用户选择的日是：" + day);
+      console.log("用户选择的時是：" + selectedHour);
+      console.log(
+        "用户的命宮是：" +
+        ((3 + parseInt(month) - parseInt(selectedHour)) % 12)
+      );
+      console.log(
+        "用户的身宮是：" +
+        ((1 + parseInt(month) + parseInt(selectedHour)) % 12)
+      );
 
-      table,
-      th,
-      td {
-        border: 1px solid #ddd;
-      }
-
-      th,
-      td {
-        padding: 10px;
-        text-align: center;
-      }
-
-      th {
-        background-color: #4caf50;
-        color: white;
-      }
-
-      input {
-        padding: 1px;
-        font-size: 16px;
-      }
-
-      .house {
-        background-color: #f0f0f0;
-        /* 背景色 */
-        color: #333;
-        /* 文字顏色 */
-        padding: 10px;
-        /* 內邊距 */
-        border: 1px solid #ccc;
-        /* 邊框 */
-        font-family: "Arial", sans-serif;
-        /* 字体 */
-        font-size: 16px;
-        /* 字体大小 */
-        font-weight: bold;
-        /* 字体粗细 */
-        /* 其他樣式屬性可以根據需要添加 */
-      }
-
-      .center {
-        font-size: 24px;
-        /* 大一點的字體大小 */
-        font-weight: bold;
-        /* 字體加粗 */
-        color: #ff5733;
-        /* 鮮艷的橙色文字顏色 */
-        /* 其他樣式屬性可以根據需要添加 */
-      }
-    </style>
-  </head>
-
-  <body>
-    <h1>簡易紫微斗數命盤</h1>
-
-    <div class="col-md-5">
-      輸入農曆出生日期：<br /><br />
-      <form id="calculatorForm">
-        <label for="year"></label>
-        <input
-          type="number"
-          id="year"
-          min="1804"
-          max="2100"
-          style="width: 100px"
-          value="2002"
-          required
-        />
-        年
-        <label for="month"></label>
-        <input
-          type="number"
-          id="month"
-          min="1"
-          max="12"
-          style="width: 100px"
-          value="8"
-          required
-        />
-        月
-        <label for="day"></label>
-        <input
-          type="number"
-          id="day"
-          min="1"
-          max="30"
-          style="width: 100px"
-          value="16"
-          required
-        />
-        日
-        <select class="form-select" id="hour" required>
-          <option value="1">子</option>
-          <option value="2" selected>丑</option>
-          <option value="3">寅</option>
-          <option value="4">卯</option>
-          <option value="5">辰</option>
-          <option value="6">巳</option>
-          <option value="7">午</option>
-          <option value="8">未</option>
-          <option value="9">申</option>
-          <option value="10">酉</option>
-          <option value="11">戌</option>
-          <option value="0">亥</option>
-        </select>
-        時
-      </form>
-    </div>
-    <br />
-    <button onclick="calculateFate()">算命</button>
-    <br /><br />
-    <div id="result">結果</div>
-    <table>
-      <tr>
-        <td class="house" id="house6">6</td>
-        <td class="house" id="house7">7</td>
-        <td class="house" id="house8">8</td>
-        <td class="house" id="house9">9</td>
-      </tr>
-      <tr>
-        <td class="house" id="house5">5</td>
-        <td colspan="2" rowspan="2" class="center" id="center"></td>
-        <td class="house" id="house10">10</td>
-      </tr>
-      <tr>
-        <td class="house" id="house4">4</td>
-        <td class="house" id="house11">11</td>
-      </tr>
-      <tr>
-        <td class="house" id="house3">3</td>
-        <td class="house" id="house2">2</td>
-        <td class="house" id="house1">1</td>
-        <td class="house" id="house0">12</td>
-      </tr>
-    </table>
-
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-      crossorigin="anonymous"
-    ></script>
-    <script>
-      function calculateFate() {
-        // const result = document.getElementById("result");
-        // result.innerHTML = "";
-
-        const elements = document.querySelectorAll(".house");
-        const centerElement = document.getElementById("center");
-
-        // 将 NodeList 转换为数组，然后将 centerElement 添加到数组中
-        const elementsArray = Array.from(elements);
-        elementsArray.push(centerElement);
-
-        for (const element of elementsArray) {
-          element.innerHTML = "";
+      const ming = document.getElementById(
+        "house" + ((3 + parseInt(month) - parseInt(selectedHour)) % 12)
+      );
+      const shen = document.getElementById(
+        "house" + ((1 + parseInt(month) + parseInt(selectedHour)) % 12)
+      );
+      shen.innerHTML += " 身宮 ";
+      const gong = [
+        "命宮 ",
+        "父母宮 ",
+        "福德宮 ",
+        "田宅宮 ",
+        "事業宮 ",
+        "朋友宮 ",
+        "遷移宮 ",
+        "疾厄宮 ",
+        "財帛宮 ",
+        "子女宮 ",
+        "夫妻宮 ",
+        "兄弟宮 ",
+      ];
+      const mingIndex = (3 + parseInt(month) - selectedHour) % 12;
+      // // 依次设置其他宫位
+      let mhme = [];
+      for (let i = 1; i <= gong.length; i++) {
+        const nextIndex = (mingIndex + i) % 12;
+        const nextHouse = document.getElementById("house" + nextIndex);
+        let houses = { nextHouse };
+        if (nextHouse) {
+          nextHouse.innerHTML += gong[i % 12];
         }
+        switch (
+        heavenlyStem % 5 //第12宮 因為取餘數不同 有問題 ` 1 2宮 則是數字未周全
+        ) {
+          case 0: //戊 癸 -甲
+            if (nextIndex == 0) {
+              nextHouse.innerHTML += heavenlyStemList[(0 + 20) % 10];
+              mhme[0] = (0 + 20) % 10;
+            } else if (nextIndex == 1) {
+              nextHouse.innerHTML += heavenlyStemList[(0 + 11) % 10];
+              mhme[0] = (0 + 11) % 10;
+            } else if (nextIndex == 2) {
+              nextHouse.innerHTML += heavenlyStemList[(0 + 12) % 10];
+              mhme[0] = (0 + 12) % 10;
+            } else {
+              nextHouse.innerHTML +=
+                heavenlyStemList[(0 + nextIndex + 8) % 10];
+              mhme[0] = (0 + nextIndex + 8) % 10;
+            }
+            break;
+          case 1: //甲 己 -丙
+            if (nextIndex == 0) {
+              nextHouse.innerHTML += heavenlyStemList[(2 + 20) % 10];
+              mhme[0] = (2 + 20) % 10;
+            } else if (nextIndex == 1) {
+              nextHouse.innerHTML += heavenlyStemList[(2 + 11) % 10];
+              mhme[0] = (2 + 11) % 10;
+            } else if (nextIndex == 2) {
+              nextHouse.innerHTML += heavenlyStemList[(2 + 12) % 10];
+              mhme[0] = (2 + 12) % 10;
+            } else {
+              nextHouse.innerHTML +=
+                heavenlyStemList[(2 + nextIndex + 8) % 10];
+              mhme[0] = (2 + nextIndex + 8) % 10;
+            }
+            break;
+          case 2: //乙 庚 -戊
+            if (nextIndex == 0) {
+              nextHouse.innerHTML += heavenlyStemList[(4 + 20) % 10];
+              mhme[0] = (4 + 20) % 10;
+            } else if (nextIndex == 1) {
+              nextHouse.innerHTML += heavenlyStemList[(4 + 11) % 10];
+              mhme[0] = (4 + 11) % 10;
+            } else if (nextIndex == 2) {
+              nextHouse.innerHTML += heavenlyStemList[(4 + 12) % 10];
+              mhme[0] = (4 + 12) % 10;
+            } else {
+              nextHouse.innerHTML +=
+                heavenlyStemList[(4 + nextIndex + 8) % 10];
+              mhme[0] = (4 + nextIndex + 8) % 10;
+            }
+            break;
+          case 3: //丙 辛 -庚
+            if (nextIndex == 0) {
+              nextHouse.innerHTML += heavenlyStemList[(6 + 20) % 10];
+              mhme[0] = (6 + 20) % 10;
+            } else if (nextIndex == 1) {
+              nextHouse.innerHTML += heavenlyStemList[(6 + 11) % 10];
+              mhme[0] = (6 + 11) % 10;
+            } else if (nextIndex == 2) {
+              nextHouse.innerHTML += heavenlyStemList[(6 + 12) % 10];
+              mhme[0] = (6 + 12) % 10;
+            } else {
+              nextHouse.innerHTML +=
+                heavenlyStemList[(6 + nextIndex + 8) % 10];
+              mhme[0] = (6 + nextIndex + 8) % 10;
+            }
+            break;
+          case 4: //丁 壬 -壬
+            if (nextIndex == 0) {
+              nextHouse.innerHTML += heavenlyStemList[(8 + 20) % 10];
+              mhme[0] = (8 + 20) % 10;
+            } else if (nextIndex == 1) {
+              nextHouse.innerHTML += heavenlyStemList[(8 + 11) % 10];
+              mhme[0] = (8 + 11) % 10;
+            } else if (nextIndex == 2) {
+              nextHouse.innerHTML += heavenlyStemList[(8 + 12) % 10];
+              mhme[0] = (8 + 12) % 10;
+            } else {
+              nextHouse.innerHTML +=
+                heavenlyStemList[(8 + nextIndex + 8) % 10];
+              mhme[0] = (8 + nextIndex + 8) % 10;
+            }
+            break;
 
-        const year = document.getElementById("year").value;
-        const month = document.getElementById("month").value; // 月份是從 0 開始的，所以要加 1
-        const day = document.getElementById("day").value;
-        const dropdown = document.getElementById("hour");
-        const selectedHour = dropdown.options[dropdown.selectedIndex].value;
-        const heavenlyStem = (year - 1803) % 10;
-        const earthlyBranch = (year - 1803) % 12;
-        const heavenlyStemList = [
-          "癸",
-          "甲",
-          "乙",
-          "丙",
-          "丁",
-          "戊",
-          "己",
-          "庚",
-          "辛",
-          "壬",
-        ]; //0~9
-        const earthlyBranchList = [
-          "亥",
-          "子",
-          "丑",
-          "寅",
-          "卯",
-          "辰",
-          "巳",
-          "午",
-          "未",
-          "申",
-          "酉",
-          "戌",
-        ]; //0~11
-        console.log(
-          "用户选择的年天干是：" +
-            heavenlyStemList[heavenlyStem] +
-            " " +
-            heavenlyStem
+          default:
+        }
+        nextHouse.innerHTML += earthlyBranchList[nextIndex];
+        mhme[1] = nextIndex;
+      }
+
+      console.log("mhme[0]:" + mhme[0] + " mhme[1]:" + mhme[1]);
+
+      result.innerText =
+        heavenlyStemList[heavenlyStem] +
+        earthlyBranchList[earthlyBranch] +
+        "年";
+      result.innerText += month + "月";
+      result.innerText += day + "日";
+      result.innerText += earthlyBranchList[selectedHour % 12] + "時"; //子0 丑1
+      const purple = 0;
+      const ny = [
+        "海中金", //甲子1 1 乙丑2 2
+        "劍鋒金", //壬申9 9 癸酉0 10
+        "白蠟金", //庚辰7 5 辛巳8 6
+        "砂中金", //甲午1 7 乙未2 8
+        "金箔金", //壬寅9 3 癸卯0 4
+        "釵釧金", //庚戌7 11 辛亥8 0
+
+        "楊柳木", //壬午9 7 癸未0 8
+        "大林木", //戊辰5 5 己巳6 6
+        "松柏木", //庚寅7 3 辛卯8 4
+        "平地木", //戊戌5 11 己亥6 0
+        "桑拓木", //壬子9 1 癸丑0 2
+        "石榴木", //庚申7 9 辛酉8 10
+
+        "澗下水", //丙子3 1 丁丑4 2
+        "泉中水", //甲申1 9  乙酉1 10
+        "長流水", //壬辰9 5 癸巳0 6
+        "天河水", //丙午3 7 丁未4 8
+        "大溪水", //甲寅1 3 乙卯1 4
+        "大海水", //壬戌9 11 癸亥0 0
+
+        "爐中火", //丙寅3 3 丁卯4 4
+        "山頭火", //甲戌1 11 乙亥2 0
+        "霹靂火", //戊子5 1 己丑6 2
+        "山下火", //丙申3 9 丁酉4 10
+        "覆燈火", //甲辰1 5 乙巳1 6
+        "天上火", //戊午5 7 己未6 8
+
+        "路傍土", //庚午7 7 辛未8 8
+        "城頭土", //戊寅5 3 己卯6 4
+        "屋上土", //丙戌3 11 丁亥4 1
+        "壁上土", //庚子7 1 辛丑8 2
+        "大驛土", //戊申5 9 己酉6 10
+        "砂中土", //丙辰3 5 丁巳4 6
+      ];
+
+      //金四局
+      if (
+        JSON.stringify(mhme) === JSON.stringify([1, 1]) ||
+        JSON.stringify(mhme) === JSON.stringify([2, 2])
+      ) {
+        result.innerText += ny[0];
+        gold();
+      }
+      if (
+        JSON.stringify(mhme) === JSON.stringify([9, 9]) ||
+        JSON.stringify(mhme) === JSON.stringify([0, 10])
+      ) {
+        result.innerText += ny[1];
+        gold();
+      }
+      if (
+        JSON.stringify(mhme) === JSON.stringify([7, 5]) ||
+        JSON.stringify(mhme) === JSON.stringify([8, 6])
+      ) {
+        result.innerText += ny[2];
+        gold();
+      }
+      if (
+        JSON.stringify(mhme) === JSON.stringify([1, 7]) ||
+        JSON.stringify(mhme) === JSON.stringify([2, 8])
+      ) {
+        result.innerText += ny[3];
+        gold();
+      }
+      if (
+        JSON.stringify(mhme) === JSON.stringify([9, 3]) ||
+        JSON.stringify(mhme) === JSON.stringify([0, 4])
+      ) {
+        result.innerText += ny[4];
+        gold();
+      }
+      if (
+        JSON.stringify(mhme) === JSON.stringify([7, 11]) ||
+        JSON.stringify(mhme) === JSON.stringify([8, 0])
+      ) {
+        result.innerText += ny[5];
+        gold();
+      }
+
+      //木三局
+      if (
+        JSON.stringify(mhme) === JSON.stringify([9, 7]) ||
+        JSON.stringify(mhme) === JSON.stringify([0, 8])
+      ) {
+        result.innerText += ny[6];
+        wood();
+      }
+      if (
+        JSON.stringify(mhme) === JSON.stringify([5, 5]) ||
+        JSON.stringify(mhme) === JSON.stringify([6, 6])
+      ) {
+        result.innerText += ny[7];
+        wood();
+      }
+      if (
+        JSON.stringify(mhme) === JSON.stringify([7, 3]) ||
+        JSON.stringify(mhme) === JSON.stringify([8, 4])
+      ) {
+        result.innerText += ny[8];
+        wood();
+      }
+      if (
+        JSON.stringify(mhme) === JSON.stringify([5, 11]) ||
+        JSON.stringify(mhme) === JSON.stringify([6, 0])
+      ) {
+        result.innerText += ny[9];
+        wood();
+      }
+      if (
+        JSON.stringify(mhme) === JSON.stringify([9, 1]) ||
+        JSON.stringify(mhme) === JSON.stringify([0, 2])
+      ) {
+        result.innerText += ny[10];
+        wood();
+      }
+      if (
+        JSON.stringify(mhme) === JSON.stringify([7, 9]) ||
+        JSON.stringify(mhme) === JSON.stringify([8, 10])
+      ) {
+        result.innerText += ny[11];
+        wood();
+      }
+
+      //水二局
+      if (
+        JSON.stringify(mhme) === JSON.stringify([3, 1]) ||
+        JSON.stringify(mhme) === JSON.stringify([4, 2])
+      ) {
+        result.innerText += ny[12];
+        water();
+      }
+      if (
+        JSON.stringify(mhme) === JSON.stringify([1, 9]) ||
+        JSON.stringify(mhme) === JSON.stringify([1, 10])
+      ) {
+        result.innerText += ny[13];
+        water();
+      }
+      if (
+        JSON.stringify(mhme) === JSON.stringify([9, 5]) ||
+        JSON.stringify(mhme) === JSON.stringify([0, 6])
+      ) {
+        result.innerText += ny[14];
+        water();
+      }
+      if (
+        JSON.stringify(mhme) === JSON.stringify([3, 7]) ||
+        JSON.stringify(mhme) === JSON.stringify([4, 8])
+      ) {
+        result.innerText += ny[15];
+        water();
+      }
+      if (
+        JSON.stringify(mhme) === JSON.stringify([1, 3]) ||
+        JSON.stringify(mhme) === JSON.stringify([1, 4])
+      ) {
+        result.innerText += ny[16];
+        water();
+      }
+      if (
+        JSON.stringify(mhme) === JSON.stringify([9, 11]) ||
+        JSON.stringify(mhme) === JSON.stringify([0, 0])
+      ) {
+        result.innerText += ny[17];
+        water();
+      }
+
+      //火六局
+      if (
+        JSON.stringify(mhme) === JSON.stringify([3, 3]) ||
+        JSON.stringify(mhme) === JSON.stringify([4, 4])
+      ) {
+        result.innerText += ny[18];
+        fire();
+      }
+      if (
+        JSON.stringify(mhme) === JSON.stringify([1, 11]) ||
+        JSON.stringify(mhme) === JSON.stringify([2, 0])
+      ) {
+        result.innerText += ny[19];
+        fire();
+      }
+      if (
+        JSON.stringify(mhme) === JSON.stringify([5, 1]) ||
+        JSON.stringify(mhme) === JSON.stringify([6, 2])
+      ) {
+        result.innerText += ny[20];
+        fire();
+      }
+      if (
+        JSON.stringify(mhme) === JSON.stringify([3, 9]) ||
+        JSON.stringify(mhme) === JSON.stringify([4, 10])
+      ) {
+        result.innerText += ny[21];
+        fire();
+      }
+      if (
+        JSON.stringify(mhme) === JSON.stringify([1, 5]) ||
+        JSON.stringify(mhme) === JSON.stringify([1, 6])
+      ) {
+        result.innerText += ny[22];
+        fire();
+      }
+      if (
+        JSON.stringify(mhme) === JSON.stringify([5, 7]) ||
+        JSON.stringify(mhme) === JSON.stringify([6, 8])
+      ) {
+        result.innerText += ny[23];
+        fire();
+      }
+
+      //土五局
+      if (
+        JSON.stringify(mhme) === JSON.stringify([7, 7]) ||
+        JSON.stringify(mhme) === JSON.stringify([8, 8])
+      ) {
+        result.innerText += ny[24];
+        mud();
+      }
+      if (
+        JSON.stringify(mhme) === JSON.stringify([5, 3]) ||
+        JSON.stringify(mhme) === JSON.stringify([6, 4])
+      ) {
+        result.innerText += ny[25];
+        mud();
+      }
+      if (
+        JSON.stringify(mhme) === JSON.stringify([3, 11]) ||
+        JSON.stringify(mhme) === JSON.stringify([4, 1])
+      ) {
+        result.innerText += ny[26];
+        mud();
+      }
+      if (
+        JSON.stringify(mhme) === JSON.stringify([7, 1]) ||
+        JSON.stringify(mhme) === JSON.stringify([8, 2])
+      ) {
+        result.innerText += ny[27];
+        mud();
+      }
+      if (
+        JSON.stringify(mhme) === JSON.stringify([5, 9]) ||
+        JSON.stringify(mhme) === JSON.stringify([6, 10])
+      ) {
+        result.innerText += ny[28];
+        mud();
+      }
+      if (
+        JSON.stringify(mhme) === JSON.stringify([3, 5]) ||
+        JSON.stringify(mhme) === JSON.stringify([4, 6])
+      ) {
+        result.innerText += ny[29];
+        mud();
+      }
+      //紫微星系
+      document.getElementById("house" + ((12 + x - 1) % 12)).innerText +=
+        " 天機星";
+      document.getElementById("house" + ((12 + x - 3) % 12)).innerText +=
+        " 太陽星";
+      document.getElementById("house" + ((12 + x - 4) % 12)).innerText +=
+        " 武曲星";
+      document.getElementById("house" + ((12 + x - 5) % 12)).innerText +=
+        " 天同星";
+      document.getElementById("house" + ((12 + x - 8) % 12)).innerText +=
+        " 廉貞星";
+      //天府星系
+      document.getElementById("house" + ((18 - x + 1) % 12)).innerText +=
+        " 太陰星";
+      document.getElementById("house" + ((18 - x + 2) % 12)).innerText +=
+        " 貪狼星";
+      document.getElementById("house" + ((18 - x + 3) % 12)).innerText +=
+        " 巨門星";
+      document.getElementById("house" + ((18 - x + 4) % 12)).innerText +=
+        " 天相星";
+      document.getElementById("house" + ((18 - x + 5) % 12)).innerText +=
+        " 天梁星";
+      document.getElementById("house" + ((18 - x + 6) % 12)).innerText +=
+        " 七殺星";
+      document.getElementById("house" + ((18 - x + 10) % 12)).innerText +=
+        " 破軍星";
+
+      const mainStarMatch = ming.innerText.match(/(\S+)星/g);
+      if (mainStarMatch) {
+        const mainStar = mainStarMatch.map((match) =>
+          match.replace(/星$/, "")
         );
-        console.log(
-          "用户选择的年地支是：" +
-            earthlyBranchList[earthlyBranch] +
-            " " +
-            earthlyBranch
-        );
-        console.log("用户选择的月是：" + month);
-        console.log("用户选择的日是：" + day);
-        console.log("用户选择的時是：" + selectedHour);
-        console.log(
-          "用户的命宮是：" +
-            ((3 + parseInt(month) - parseInt(selectedHour)) % 12)
-        );
-        console.log(
-          "用户的身宮是：" +
-            ((1 + parseInt(month) + parseInt(selectedHour)) % 12)
-        );
-
-        const ming = document.getElementById(
-          "house" + ((3 + parseInt(month) - parseInt(selectedHour)) % 12)
-        );
-        const shen = document.getElementById(
-          "house" + ((1 + parseInt(month) + parseInt(selectedHour)) % 12)
-        );
-        shen.innerHTML += " 身宮 ";
-        const gong = [
-          "命宮 ",
-          "父母宮 ",
-          "福德宮 ",
-          "田宅宮 ",
-          "事業宮 ",
-          "朋友宮 ",
-          "遷移宮 ",
-          "疾厄宮 ",
-          "財帛宮 ",
-          "子女宮 ",
-          "夫妻宮 ",
-          "兄弟宮 ",
-        ];
-        const mingIndex = (3 + parseInt(month) - selectedHour) % 12;
-        // // 依次设置其他宫位
-        let mhme = [];
-        for (let i = 1; i <= gong.length; i++) {
-          const nextIndex = (mingIndex + i) % 12;
-          const nextHouse = document.getElementById("house" + nextIndex);
-          let houses = { nextHouse };
-          if (nextHouse) {
-            nextHouse.innerHTML += gong[i % 12];
-          }
-          switch (
-            heavenlyStem % 5 //第12宮 因為取餘數不同 有問題 ` 1 2宮 則是數字未周全
-          ) {
-            case 0: //戊 癸 -甲
-              if (nextIndex == 0) {
-                nextHouse.innerHTML += heavenlyStemList[(0 + 20) % 10];
-                mhme[0] = (0 + 20) % 10;
-              } else if (nextIndex == 1) {
-                nextHouse.innerHTML += heavenlyStemList[(0 + 11) % 10];
-                mhme[0] = (0 + 11) % 10;
-              } else if (nextIndex == 2) {
-                nextHouse.innerHTML += heavenlyStemList[(0 + 12) % 10];
-                mhme[0] = (0 + 12) % 10;
-              } else {
-                nextHouse.innerHTML +=
-                  heavenlyStemList[(0 + nextIndex + 8) % 10];
-                mhme[0] = (0 + nextIndex + 8) % 10;
-              }
-              break;
-            case 1: //甲 己 -丙
-              if (nextIndex == 0) {
-                nextHouse.innerHTML += heavenlyStemList[(2 + 20) % 10];
-                mhme[0] = (2 + 20) % 10;
-              } else if (nextIndex == 1) {
-                nextHouse.innerHTML += heavenlyStemList[(2 + 11) % 10];
-                mhme[0] = (2 + 11) % 10;
-              } else if (nextIndex == 2) {
-                nextHouse.innerHTML += heavenlyStemList[(2 + 12) % 10];
-                mhme[0] = (2 + 12) % 10;
-              } else {
-                nextHouse.innerHTML +=
-                  heavenlyStemList[(2 + nextIndex + 8) % 10];
-                mhme[0] = (2 + nextIndex + 8) % 10;
-              }
-              break;
-            case 2: //乙 庚 -戊
-              if (nextIndex == 0) {
-                nextHouse.innerHTML += heavenlyStemList[(4 + 20) % 10];
-                mhme[0] = (4 + 20) % 10;
-              } else if (nextIndex == 1) {
-                nextHouse.innerHTML += heavenlyStemList[(4 + 11) % 10];
-                mhme[0] = (4 + 11) % 10;
-              } else if (nextIndex == 2) {
-                nextHouse.innerHTML += heavenlyStemList[(4 + 12) % 10];
-                mhme[0] = (4 + 12) % 10;
-              } else {
-                nextHouse.innerHTML +=
-                  heavenlyStemList[(4 + nextIndex + 8) % 10];
-                mhme[0] = (4 + nextIndex + 8) % 10;
-              }
-              break;
-            case 3: //丙 辛 -庚
-              if (nextIndex == 0) {
-                nextHouse.innerHTML += heavenlyStemList[(6 + 20) % 10];
-                mhme[0] = (6 + 20) % 10;
-              } else if (nextIndex == 1) {
-                nextHouse.innerHTML += heavenlyStemList[(6 + 11) % 10];
-                mhme[0] = (6 + 11) % 10;
-              } else if (nextIndex == 2) {
-                nextHouse.innerHTML += heavenlyStemList[(6 + 12) % 10];
-                mhme[0] = (6 + 12) % 10;
-              } else {
-                nextHouse.innerHTML +=
-                  heavenlyStemList[(6 + nextIndex + 8) % 10];
-                mhme[0] = (6 + nextIndex + 8) % 10;
-              }
-              break;
-            case 4: //丁 壬 -壬
-              if (nextIndex == 0) {
-                nextHouse.innerHTML += heavenlyStemList[(8 + 20) % 10];
-                mhme[0] = (8 + 20) % 10;
-              } else if (nextIndex == 1) {
-                nextHouse.innerHTML += heavenlyStemList[(8 + 11) % 10];
-                mhme[0] = (8 + 11) % 10;
-              } else if (nextIndex == 2) {
-                nextHouse.innerHTML += heavenlyStemList[(8 + 12) % 10];
-                mhme[0] = (8 + 12) % 10;
-              } else {
-                nextHouse.innerHTML +=
-                  heavenlyStemList[(8 + nextIndex + 8) % 10];
-                mhme[0] = (8 + nextIndex + 8) % 10;
-              }
-              break;
-
-            default:
-          }
-          nextHouse.innerHTML += earthlyBranchList[nextIndex];
-          mhme[1] = nextIndex;
-        }
-
-        console.log("mhme[0]:" + mhme[0] + " mhme[1]:" + mhme[1]);
-
-        result.innerText =
-          heavenlyStemList[heavenlyStem] +
-          earthlyBranchList[earthlyBranch] +
-          "年";
-        result.innerText += month + "月";
-        result.innerText += day + "日";
-        result.innerText += earthlyBranchList[selectedHour % 12] + "時"; //子0 丑1
-        const purple = 0;
-        const ny = [
-          "海中金", //甲子1 1 乙丑2 2
-          "劍鋒金", //壬申9 9 癸酉0 10
-          "白蠟金", //庚辰7 5 辛巳8 6
-          "砂中金", //甲午1 7 乙未2 8
-          "金箔金", //壬寅9 3 癸卯0 4
-          "釵釧金", //庚戌7 11 辛亥8 0
-
-          "楊柳木", //壬午9 7 癸未0 8
-          "大林木", //戊辰5 5 己巳6 6
-          "松柏木", //庚寅7 3 辛卯8 4
-          "平地木", //戊戌5 11 己亥6 0
-          "桑拓木", //壬子9 1 癸丑0 2
-          "石榴木", //庚申7 9 辛酉8 10
-
-          "澗下水", //丙子3 1 丁丑4 2
-          "泉中水", //甲申1 9  乙酉1 10
-          "長流水", //壬辰9 5 癸巳0 6
-          "天河水", //丙午3 7 丁未4 8
-          "大溪水", //甲寅1 3 乙卯1 4
-          "大海水", //壬戌9 11 癸亥0 0
-
-          "爐中火", //丙寅3 3 丁卯4 4
-          "山頭火", //甲戌1 11 乙亥2 0
-          "霹靂火", //戊子5 1 己丑6 2
-          "山下火", //丙申3 9 丁酉4 10
-          "覆燈火", //甲辰1 5 乙巳1 6
-          "天上火", //戊午5 7 己未6 8
-
-          "路傍土", //庚午7 7 辛未8 8
-          "城頭土", //戊寅5 3 己卯6 4
-          "屋上土", //丙戌3 11 丁亥4 1
-          "壁上土", //庚子7 1 辛丑8 2
-          "大驛土", //戊申5 9 己酉6 10
-          "砂中土", //丙辰3 5 丁巳4 6
-        ];
-
-        //金四局
-        if (
-          JSON.stringify(mhme) === JSON.stringify([1, 1]) ||
-          JSON.stringify(mhme) === JSON.stringify([2, 2])
-        ) {
-          result.innerText += ny[0];
-          gold();
-        }
-        if (
-          JSON.stringify(mhme) === JSON.stringify([9, 9]) ||
-          JSON.stringify(mhme) === JSON.stringify([0, 10])
-        ) {
-          result.innerText += ny[1];
-          gold();
-        }
-        if (
-          JSON.stringify(mhme) === JSON.stringify([7, 5]) ||
-          JSON.stringify(mhme) === JSON.stringify([8, 6])
-        ) {
-          result.innerText += ny[2];
-          gold();
-        }
-        if (
-          JSON.stringify(mhme) === JSON.stringify([1, 7]) ||
-          JSON.stringify(mhme) === JSON.stringify([2, 8])
-        ) {
-          result.innerText += ny[3];
-          gold();
-        }
-        if (
-          JSON.stringify(mhme) === JSON.stringify([9, 3]) ||
-          JSON.stringify(mhme) === JSON.stringify([0, 4])
-        ) {
-          result.innerText += ny[4];
-          gold();
-        }
-        if (
-          JSON.stringify(mhme) === JSON.stringify([7, 11]) ||
-          JSON.stringify(mhme) === JSON.stringify([8, 0])
-        ) {
-          result.innerText += ny[5];
-          gold();
-        }
-
-        //木三局
-        if (
-          JSON.stringify(mhme) === JSON.stringify([9, 7]) ||
-          JSON.stringify(mhme) === JSON.stringify([0, 8])
-        ) {
-          result.innerText += ny[6];
-          wood();
-        }
-        if (
-          JSON.stringify(mhme) === JSON.stringify([5, 5]) ||
-          JSON.stringify(mhme) === JSON.stringify([6, 6])
-        ) {
-          result.innerText += ny[7];
-          wood();
-        }
-        if (
-          JSON.stringify(mhme) === JSON.stringify([7, 3]) ||
-          JSON.stringify(mhme) === JSON.stringify([8, 4])
-        ) {
-          result.innerText += ny[8];
-          wood();
-        }
-        if (
-          JSON.stringify(mhme) === JSON.stringify([5, 11]) ||
-          JSON.stringify(mhme) === JSON.stringify([6, 0])
-        ) {
-          result.innerText += ny[9];
-          wood();
-        }
-        if (
-          JSON.stringify(mhme) === JSON.stringify([9, 1]) ||
-          JSON.stringify(mhme) === JSON.stringify([0, 2])
-        ) {
-          result.innerText += ny[10];
-          wood();
-        }
-        if (
-          JSON.stringify(mhme) === JSON.stringify([7, 9]) ||
-          JSON.stringify(mhme) === JSON.stringify([8, 10])
-        ) {
-          result.innerText += ny[11];
-          wood();
-        }
-
-        //水二局
-        if (
-          JSON.stringify(mhme) === JSON.stringify([3, 1]) ||
-          JSON.stringify(mhme) === JSON.stringify([4, 2])
-        ) {
-          result.innerText += ny[12];
-          water();
-        }
-        if (
-          JSON.stringify(mhme) === JSON.stringify([1, 9]) ||
-          JSON.stringify(mhme) === JSON.stringify([1, 10])
-        ) {
-          result.innerText += ny[13];
-          water();
-        }
-        if (
-          JSON.stringify(mhme) === JSON.stringify([9, 5]) ||
-          JSON.stringify(mhme) === JSON.stringify([0, 6])
-        ) {
-          result.innerText += ny[14];
-          water();
-        }
-        if (
-          JSON.stringify(mhme) === JSON.stringify([3, 7]) ||
-          JSON.stringify(mhme) === JSON.stringify([4, 8])
-        ) {
-          result.innerText += ny[15];
-          water();
-        }
-        if (
-          JSON.stringify(mhme) === JSON.stringify([1, 3]) ||
-          JSON.stringify(mhme) === JSON.stringify([1, 4])
-        ) {
-          result.innerText += ny[16];
-          water();
-        }
-        if (
-          JSON.stringify(mhme) === JSON.stringify([9, 11]) ||
-          JSON.stringify(mhme) === JSON.stringify([0, 0])
-        ) {
-          result.innerText += ny[17];
-          water();
-        }
-
-        //火六局
-        if (
-          JSON.stringify(mhme) === JSON.stringify([3, 3]) ||
-          JSON.stringify(mhme) === JSON.stringify([4, 4])
-        ) {
-          result.innerText += ny[18];
-          fire();
-        }
-        if (
-          JSON.stringify(mhme) === JSON.stringify([1, 11]) ||
-          JSON.stringify(mhme) === JSON.stringify([2, 0])
-        ) {
-          result.innerText += ny[19];
-          fire();
-        }
-        if (
-          JSON.stringify(mhme) === JSON.stringify([5, 1]) ||
-          JSON.stringify(mhme) === JSON.stringify([6, 2])
-        ) {
-          result.innerText += ny[20];
-          fire();
-        }
-        if (
-          JSON.stringify(mhme) === JSON.stringify([3, 9]) ||
-          JSON.stringify(mhme) === JSON.stringify([4, 10])
-        ) {
-          result.innerText += ny[21];
-          fire();
-        }
-        if (
-          JSON.stringify(mhme) === JSON.stringify([1, 5]) ||
-          JSON.stringify(mhme) === JSON.stringify([1, 6])
-        ) {
-          result.innerText += ny[22];
-          fire();
-        }
-        if (
-          JSON.stringify(mhme) === JSON.stringify([5, 7]) ||
-          JSON.stringify(mhme) === JSON.stringify([6, 8])
-        ) {
-          result.innerText += ny[23];
-          fire();
-        }
-
-        //土五局
-        if (
-          JSON.stringify(mhme) === JSON.stringify([7, 7]) ||
-          JSON.stringify(mhme) === JSON.stringify([8, 8])
-        ) {
-          result.innerText += ny[24];
-          mud();
-        }
-        if (
-          JSON.stringify(mhme) === JSON.stringify([5, 3]) ||
-          JSON.stringify(mhme) === JSON.stringify([6, 4])
-        ) {
-          result.innerText += ny[25];
-          mud();
-        }
-        if (
-          JSON.stringify(mhme) === JSON.stringify([3, 11]) ||
-          JSON.stringify(mhme) === JSON.stringify([4, 1])
-        ) {
-          result.innerText += ny[26];
-          mud();
-        }
-        if (
-          JSON.stringify(mhme) === JSON.stringify([7, 1]) ||
-          JSON.stringify(mhme) === JSON.stringify([8, 2])
-        ) {
-          result.innerText += ny[27];
-          mud();
-        }
-        if (
-          JSON.stringify(mhme) === JSON.stringify([5, 9]) ||
-          JSON.stringify(mhme) === JSON.stringify([6, 10])
-        ) {
-          result.innerText += ny[28];
-          mud();
-        }
-        if (
-          JSON.stringify(mhme) === JSON.stringify([3, 5]) ||
-          JSON.stringify(mhme) === JSON.stringify([4, 6])
-        ) {
-          result.innerText += ny[29];
-          mud();
-        }
-        //紫微星系
-        document.getElementById("house" + ((12 + x - 1) % 12)).innerText +=
-          " 天機星";
-        document.getElementById("house" + ((12 + x - 3) % 12)).innerText +=
-          " 太陽星";
-        document.getElementById("house" + ((12 + x - 4) % 12)).innerText +=
-          " 武曲星";
-        document.getElementById("house" + ((12 + x - 5) % 12)).innerText +=
-          " 天同星";
-        document.getElementById("house" + ((12 + x - 8) % 12)).innerText +=
-          " 廉貞星";
-        //天府星系
-        document.getElementById("house" + ((18 - x + 1) % 12)).innerText +=
-          " 太陰星";
-        document.getElementById("house" + ((18 - x + 2) % 12)).innerText +=
-          " 貪狼星";
-        document.getElementById("house" + ((18 - x + 3) % 12)).innerText +=
-          " 巨門星";
-        document.getElementById("house" + ((18 - x + 4) % 12)).innerText +=
-          " 天相星";
-        document.getElementById("house" + ((18 - x + 5) % 12)).innerText +=
-          " 天梁星";
-        document.getElementById("house" + ((18 - x + 6) % 12)).innerText +=
-          " 七殺星";
-        document.getElementById("house" + ((18 - x + 10) % 12)).innerText +=
-          " 破軍星";
-
-        const mainStarMatch = ming.innerText.match(/(\S+)星/g);
-        if (mainStarMatch) {
-          const mainStar = mainStarMatch.map((match) =>
-            match.replace(/星$/, "")
-          );
-          const a = mainStar + "坐命";
-          document.getElementById("center").innerHTML += `<a href="https://www.google.com/search?q=${mainStar}坐命" target="_blank">${a}</a>`;
-                  } else {
-          document.getElementById("center").innerHTML += `<a href="https://www.google.com/search?q=命宮無主星" target="_blank">命宮無主星</a>`;
-        }
+        const a = mainStar + "坐命";
+        document.getElementById("center").innerHTML += `<a href="https://www.google.com/search?q=${mainStar}坐命" target="_blank">${a}</a>`;
+      } else {
+        document.getElementById("center").innerHTML += `<a href="https://www.google.com/search?q=命宮無主星" target="_blank">命宮無主星</a>`;
       }
-      let x;
+    }
+    let x;
 
-      function water() {
-        if (day.value == 22 || day.value == 23) {
-          x = 1;
-        }
-        if (day.value == 1 || day.value == 24 || day.value == 25) {
-          x = 2;
-        }
-        if (
-          day.value == 2 ||
-          day.value == 3 ||
-          day.value == 26 ||
-          day.value == 27
-        ) {
-          x = 3;
-        }
-        if (
-          day.value == 4 ||
-          day.value == 5 ||
-          day.value == 28 ||
-          day.value == 29
-        ) {
-          x = 4;
-        }
-        if (day.value == 6 || day.value == 7 || day.value == 30) {
-          x = 5;
-        }
-        if (day.value == 8 || day.value == 9) {
-          x = 6;
-        }
-        if (day.value == 10 || day.value == 11) {
-          x = 7;
-        }
-        if (day.value == 12 || day.value == 13) {
-          x = 8;
-        }
-        if (day.value == 14 || day.value == 15) {
-          x = 9;
-        }
-        if (day.value == 16 || day.value == 17) {
-          x = 10;
-          console.log(x);
-        }
-        if (day.value == 18 || day.value == 19) {
-          x = 11;
-        }
-        if (day.value == 20 || day.value == 21) {
-          x = 0;
-        }
-
-        document.getElementById("house" + x).innerText += " 紫微星";
-        document.getElementById("house" + ((18 - x) % 12)).innerText +=
-          " 天府星";
-        return x;
+    function water() {
+      if (day.value == 22 || day.value == 23) {
+        x = 1;
       }
-      function wood() {
-        if (day.value == 25) {
-          x = 1;
-        }
-        if (day.value == 2 || day.value == 28) {
-          x = 2;
-        }
-        if (day.value == 3 || day.value == 5) {
-          x = 3;
-        }
-        if (day.value == 6 || day.value == 8) {
-          x = 4;
-        }
-        if (day.value == 1 || day.value == 9 || day.value == 11) {
-          x = 5;
-        }
-        if (day.value == 4 || day.value == 12 || day.value == 14) {
-          x = 6;
-        }
-        if (day.value == 7 || day.value == 15 || day.value == 17) {
-          x = 7;
-        }
-        if (day.value == 10 || day.value == 18 || day.value == 20) {
-          x = 8;
-        }
-        if (day.value == 13 || day.value == 21 || day.value == 23) {
-          x = 9;
-        }
-        if (day.value == 16 || day.value == 24 || day.value == 26) {
-          x = 10;
-          console.log(x);
-        }
-        if (day.value == 19 || day.value == 27 || day.value == 29) {
-          x = 11;
-        }
-        if (day.value == 22 || day.value == 30) {
-          x = 0;
-        }
-
-        document.getElementById("house" + x).innerText += " 紫微星";
-        document.getElementById("house" + ((18 - x) % 12)).innerText +=
-          " 天府星";
-        return x;
+      if (day.value == 1 || day.value == 24 || day.value == 25) {
+        x = 2;
       }
-      function gold() {
-        if (day.value == 5) {
-          x = 1;
-        }
-        if (day.value == 3 || day.value == 9) {
-          x = 2;
-        }
-        if (day.value == 4 || day.value == 7 || day.value == 13) {
-          x = 3;
-        }
-        if (day.value == 8 || day.value == 11 || day.value == 17) {
-          x = 4;
-        }
-        if (
-          day.value == 2 ||
-          day.value == 12 ||
-          day.value == 15 ||
-          day.value == 21
-        ) {
-          x = 5;
-        }
-        if (
-          day.value == 6 ||
-          day.value == 16 ||
-          day.value == 19 ||
-          day.value == 25
-        ) {
-          x = 6;
-        }
-        if (
-          day.value == 10 ||
-          day.value == 20 ||
-          day.value == 23 ||
-          day.value == 29
-        ) {
-          x = 7;
-        }
-        if (day.value == 14 || day.value == 24 || day.value == 27) {
-          x = 8;
-        }
-        if (day.value == 18 || day.value == 28) {
-          x = 9;
-        }
-        if (day.value == 22) {
-          x = 10;
-          console.log(x);
-        }
-        if (day.value == 26) {
-          x = 11;
-        }
-        if (day.value == 1 || day.value == 30) {
-          x = 0;
-        }
-
-        document.getElementById("house" + x).innerText += " 紫微星";
-        document.getElementById("house" + ((18 - x) % 12)).innerText +=
-          " 天府星";
-        return x;
+      if (
+        day.value == 2 ||
+        day.value == 3 ||
+        day.value == 26 ||
+        day.value == 27
+      ) {
+        x = 3;
       }
-      function mud() {
-        if (day.value == 7) {
-          x = 1;
-        }
-        if (day.value == 4 || day.value == 12) {
-          x = 2;
-        }
-        if (day.value == 5 || day.value == 9 || day.value == 17) {
-          x = 3;
-        }
-        if (day.value == 10 || day.value == 14 || day.value == 22) {
-          x = 4;
-        }
-        if (
-          day.value == 3 ||
-          day.value == 15 ||
-          day.value == 19 ||
-          day.value == 27
-        ) {
-          x = 5;
-        }
-        if (day.value == 8 || day.value == 20 || day.value == 24) {
-          x = 6;
-        }
-        if (
-          day.value == 1 ||
-          day.value == 13 ||
-          day.value == 25 ||
-          day.value == 29
-        ) {
-          x = 7;
-        }
-        if (day.value == 6 || day.value == 18 || day.value == 30) {
-          x = 8;
-        }
-        if (day.value == 11 || day.value == 13) {
-          x = 9;
-        }
-        if (day.value == 16 || day.value == 28) {
-          x = 10;
-        }
-        if (day.value == 21) {
-          x = 11;
-        }
-        if (day.value == 26 || day.value == 2) {
-          x = 0;
-        }
-
-        document.getElementById("house" + x).innerText += " 紫微星";
-        document.getElementById("house" + ((18 - x) % 12)).innerText +=
-          " 天府星";
-        return x;
+      if (
+        day.value == 4 ||
+        day.value == 5 ||
+        day.value == 28 ||
+        day.value == 29
+      ) {
+        x = 4;
       }
-      function fire() {
-        if (day.value == 9 || day.value == 19) {
-          x = 1;
-        }
-        if (day.value == 5 || day.value == 15 || day.value == 25) {
-          x = 2;
-        }
-        if (day.value == 6 || day.value == 11 || day.value == 21) {
-          x = 3;
-        }
-        if (day.value == 12 || day.value == 17 || day.value == 27) {
-          x = 4;
-        }
-        if (day.value == 4 || day.value == 18 || day.value == 23) {
-          x = 5;
-        }
-        if (day.value == 10 || day.value == 24 || day.value == 29) {
-          x = 6;
-        }
-        if (day.value == 2 || day.value == 16 || day.value == 30) {
-          x = 7;
-        }
-        if (day.value == 8 || day.value == 22) {
-          x = 8;
-        }
-        if (day.value == 14 || day.value == 28) {
-          x = 9;
-        }
-        if (day.value == 1 || day.value == 20) {
-          x = 10;
-          console.log(x);
-        }
-        if (day.value == 7 || day.value == 26) {
-          x = 11;
-        }
-        if (day.value == 3 || day.value == 13) {
-          x = 0;
-        }
-
-        document.getElementById("house" + x).innerText += " 紫微星";
-        document.getElementById("house" + ((18 - x) % 12)).innerText +=
-          " 天府星";
-        return x;
+      if (day.value == 6 || day.value == 7 || day.value == 30) {
+        x = 5;
       }
-    </script>
+      if (day.value == 8 || day.value == 9) {
+        x = 6;
+      }
+      if (day.value == 10 || day.value == 11) {
+        x = 7;
+      }
+      if (day.value == 12 || day.value == 13) {
+        x = 8;
+      }
+      if (day.value == 14 || day.value == 15) {
+        x = 9;
+      }
+      if (day.value == 16 || day.value == 17) {
+        x = 10;
+        console.log(x);
+      }
+      if (day.value == 18 || day.value == 19) {
+        x = 11;
+      }
+      if (day.value == 20 || day.value == 21) {
+        x = 0;
+      }
+
+      document.getElementById("house" + x).innerText += " 紫微星";
+      document.getElementById("house" + ((18 - x) % 12)).innerText +=
+        " 天府星";
+      return x;
+    }
+    function wood() {
+      if (day.value == 25) {
+        x = 1;
+      }
+      if (day.value == 2 || day.value == 28) {
+        x = 2;
+      }
+      if (day.value == 3 || day.value == 5) {
+        x = 3;
+      }
+      if (day.value == 6 || day.value == 8) {
+        x = 4;
+      }
+      if (day.value == 1 || day.value == 9 || day.value == 11) {
+        x = 5;
+      }
+      if (day.value == 4 || day.value == 12 || day.value == 14) {
+        x = 6;
+      }
+      if (day.value == 7 || day.value == 15 || day.value == 17) {
+        x = 7;
+      }
+      if (day.value == 10 || day.value == 18 || day.value == 20) {
+        x = 8;
+      }
+      if (day.value == 13 || day.value == 21 || day.value == 23) {
+        x = 9;
+      }
+      if (day.value == 16 || day.value == 24 || day.value == 26) {
+        x = 10;
+        console.log(x);
+      }
+      if (day.value == 19 || day.value == 27 || day.value == 29) {
+        x = 11;
+      }
+      if (day.value == 22 || day.value == 30) {
+        x = 0;
+      }
+
+      document.getElementById("house" + x).innerText += " 紫微星";
+      document.getElementById("house" + ((18 - x) % 12)).innerText +=
+        " 天府星";
+      return x;
+    }
+    function gold() {
+      if (day.value == 5) {
+        x = 1;
+      }
+      if (day.value == 3 || day.value == 9) {
+        x = 2;
+      }
+      if (day.value == 4 || day.value == 7 || day.value == 13) {
+        x = 3;
+      }
+      if (day.value == 8 || day.value == 11 || day.value == 17) {
+        x = 4;
+      }
+      if (
+        day.value == 2 ||
+        day.value == 12 ||
+        day.value == 15 ||
+        day.value == 21
+      ) {
+        x = 5;
+      }
+      if (
+        day.value == 6 ||
+        day.value == 16 ||
+        day.value == 19 ||
+        day.value == 25
+      ) {
+        x = 6;
+      }
+      if (
+        day.value == 10 ||
+        day.value == 20 ||
+        day.value == 23 ||
+        day.value == 29
+      ) {
+        x = 7;
+      }
+      if (day.value == 14 || day.value == 24 || day.value == 27) {
+        x = 8;
+      }
+      if (day.value == 18 || day.value == 28) {
+        x = 9;
+      }
+      if (day.value == 22) {
+        x = 10;
+        console.log(x);
+      }
+      if (day.value == 26) {
+        x = 11;
+      }
+      if (day.value == 1 || day.value == 30) {
+        x = 0;
+      }
+
+      document.getElementById("house" + x).innerText += " 紫微星";
+      document.getElementById("house" + ((18 - x) % 12)).innerText +=
+        " 天府星";
+      return x;
+    }
+    function mud() {
+      if (day.value == 7) {
+        x = 1;
+      }
+      if (day.value == 4 || day.value == 12) {
+        x = 2;
+      }
+      if (day.value == 5 || day.value == 9 || day.value == 17) {
+        x = 3;
+      }
+      if (day.value == 10 || day.value == 14 || day.value == 22) {
+        x = 4;
+      }
+      if (
+        day.value == 3 ||
+        day.value == 15 ||
+        day.value == 19 ||
+        day.value == 27
+      ) {
+        x = 5;
+      }
+      if (day.value == 8 || day.value == 20 || day.value == 24) {
+        x = 6;
+      }
+      if (
+        day.value == 1 ||
+        day.value == 13 ||
+        day.value == 25 ||
+        day.value == 29
+      ) {
+        x = 7;
+      }
+      if (day.value == 6 || day.value == 18 || day.value == 30) {
+        x = 8;
+      }
+      if (day.value == 11 || day.value == 13) {
+        x = 9;
+      }
+      if (day.value == 16 || day.value == 28) {
+        x = 10;
+      }
+      if (day.value == 21) {
+        x = 11;
+      }
+      if (day.value == 26 || day.value == 2) {
+        x = 0;
+      }
+
+      document.getElementById("house" + x).innerText += " 紫微星";
+      document.getElementById("house" + ((18 - x) % 12)).innerText +=
+        " 天府星";
+      return x;
+    }
+    function fire() {
+      if (day.value == 9 || day.value == 19) {
+        x = 1;
+      }
+      if (day.value == 5 || day.value == 15 || day.value == 25) {
+        x = 2;
+      }
+      if (day.value == 6 || day.value == 11 || day.value == 21) {
+        x = 3;
+      }
+      if (day.value == 12 || day.value == 17 || day.value == 27) {
+        x = 4;
+      }
+      if (day.value == 4 || day.value == 18 || day.value == 23) {
+        x = 5;
+      }
+      if (day.value == 10 || day.value == 24 || day.value == 29) {
+        x = 6;
+      }
+      if (day.value == 2 || day.value == 16 || day.value == 30) {
+        x = 7;
+      }
+      if (day.value == 8 || day.value == 22) {
+        x = 8;
+      }
+      if (day.value == 14 || day.value == 28) {
+        x = 9;
+      }
+      if (day.value == 1 || day.value == 20) {
+        x = 10;
+        console.log(x);
+      }
+      if (day.value == 7 || day.value == 26) {
+        x = 11;
+      }
+      if (day.value == 3 || day.value == 13) {
+        x = 0;
+      }
+
+      document.getElementById("house" + x).innerText += " 紫微星";
+      document.getElementById("house" + ((18 - x) % 12)).innerText +=
+        " 天府星";
+      return x;
+    }
+    function submitForm() {
+      // 在這裡添加處理表單的邏輯
+
+      // 跳轉到 z2.html 頁面
+      window.location.href = '/group';
+
+      // 阻止表單的默認提交行為
+      return false;
+  }
+  </script>
+  <form action="/submit" method="post" onsubmit="return submitForm();">
+    <!-- 使用 label 元素標記輸入框 -->
+    <label for="name">姓名：</label>
+    <!-- 使用 input 元素創建輸入框 -->
+    <input type="text" id="name" name="name" required>
+    <!-- 使用 button 元素創建提交按鈕 -->
+    <button type="submit">確認送出並查看我的朋友圈</button>
+</form>
+
+  <footer>
     <h5>
       <br />紫微斗數創立的基本架構是以命盤的十二宮作為生命盤的方位界定<br />
       紫微斗數預測需對照全盤結構，此網頁僅供娛樂
       <br /><br />
     </h5>
+  </footer>
 
-    <table>
-      <tr>
-        <th>
-          <h2>【紫微星】</h2>
-          大鵬一日同風起，扶搖直上九萬裡! ————《上李邕》李白<br /><br />
-          誰的人生注定不凡，當屬紫微星!雄才武略，不疾不徐，運籌帷幄，時機成熟之時，能乘風而起，扶搖直上九萬裡。
-        </th>
+ 
+</body>
 
-      </tr>
-      <tr>
-        <th>
-          <h2>【天機星】</h2>
-          君子慎始而後無憂。 ——《上文丞相書》蘇洵<br /><br />
-          天機從不做沒把握的事!這種三思的處事習慣，不僅讓身邊人超有安全感，也在為他們自己人生的順遂無憂保駕護航。
-        </th>
-
-      </tr>
-      <tr>
-        <th>
-          <h2>【太陽星】</h2>
-          山重水復疑無路，柳暗花明又一村。 ——《遊山西村》陸遊<br /><br />
-          天性樂觀開朗的太陽，遇事不慌，心態超穩，也正是因為時時刻刻保持柳暗花明又一村的豁達，太陽才能對生活充滿熱情，活力滿滿。
-        </th>
-
-      </tr>
-      <tr>
-        <th>
-          <h2>【武曲星】</h2>
-          富貴必從勤苦得，男兒須讀五車書。 ——《柏學士茅屋》杜甫<br /><br />
-          武曲這顆大財星，是當之無愧的財迷，愛財但取財有道，之所以比同齡人更容易有錢富甲，不過是在身體力行踐行勤勞致富罷了!
-        </th>
-
-      </tr>
-      <tr>
-        <th>
-          <h2>【天同星】</h2>
-          天下莫柔弱於水，而攻堅強者莫之能勝，以其無以易之。 ——《道德經》老子<br /><br />
-
-          以柔克剛誰最在行，天同說二沒人爭做第一，致力於追求極致的和諧，看似柔弱，卻有著自己的處事之道，大智若愚之人，爭千秋，不爭一時
-        </th>
-
-      </tr>
-      <tr>
-        <th>
-          <h2>【廉貞星】</h2>
-          非才之難，所以自用者實難。 ——《賈誼論》蘇遼<br /><br />
-
-          廉貞!心高氣傲的有才之人，常常困擾於自己見識不凡卻又生不逢時!風水輪流轉，待廉貞才能發揮的時候，必是大放異彩之時。
-        </th>
-
-      </tr>
-      <tr>
-        <th>
-          <h2>【天府星】</h2>
-          有花堪折直須折，莫待無花空折枝。 ——《雜詩》唐代.無名氏<br /><br />
-
-          天府深諳今朝有酒今朝醉的快樂，活在當下，享受生活，用最輕鬆的方式實現目標，按照自己構想的方式走過人生。
-        </th>
-
-      </tr>
-      <tr>
-        <th>
-          <h2>【太陰星】</h2>
-          智者樂山山如畫，仁者樂水水無涯。 ——《夜語輕舟》陶淵明<br /><br />
-
-          太陰為何能在廝殺激烈的當下，出走半生，歸來仍是少年。精神富足，善於自洽便是其中關鍵，知足常樂，甘於平淡，何愁歲月不靜好?
-        </th>
-
-      </tr>
-      <tr>
-        <th>
-          <h2>【貪狼星】</h2>
-          舉觴白眼望青天,皎如玉樹臨風前。 ——《飲中八仙歌》杜甫<br /><br />
-
-          多才多藝的貪狼，外表常給人玉樹臨風，陌上如玉的優雅，骨子裡有一股桀騸不馴的傲氣，也許是這種矛盾反差，使其成為人群裡的桃花星，萬人迷。
-        </th>
-
-      </tr>
-      <tr>
-        <th>
-          <h2>【巨門星】</h2>
-          彼都人士，狐裘黃黃，其容不改，出言成章。 ——《詩經·小雅·都人士》<br /><br />
-
-          出口成章，說的不就是一生「靠嘴就能吃飯」的巨門嗎?氣質不凡，能說會道的謙謙君子，人生之路總是充滿戲劇性。
-        </th>
-
-      </tr>
-      <tr>
-        <th>
-          <h2>【天相星】</h2>
-          此鳥不飛則已，一飛沖天，不鳴則已，一鳴驚人。 ——《滑稽列傳》司馬遷<br /><br />
-          天相就是那種低調做事，厚積薄發的人，雖然野心不大，但是目標清晰，很有規劃，一步一腳印，待到根基牢固時，一鳴驚人。
-        </th>
-
-      </tr>
-      <tr>
-        <th>
-          <h2>【天梁星】</h2>
-          但知行好事，莫要問前程。 ——《天道》馮道<br /><br />
-
-          善良是紮根於天梁性格深處的底色，熱心助人會為他們帶去諸多，貴人，成就……但在天樑自己卻始終覺得：但行好事，不問前程才是俠肝義膽的真實寫照。
-        </th>
-
-      </tr>
-      <tr>
-        <th>
-          <h2>【七殺星】</h2>
-          生當作人傑，死亦為鬼雄 ——《絕句》李清照<br /><br />
-
-          一往無前，無問西東，說的就是七殺。決定了的事定要努力拼搏一把，做出一番成績來，成王敗寇，皆是英雄。
-        </th>
-
-      </tr>
-      <tr>
-        <th>
-          <h2>【破軍星】</h2>
-          孤雲隨殺氣，飛鳥避轅門。 ——《觀安西兵過赴關中待命(其二)》杜甫<br /><br />
-
-          破軍出場自帶強大氣場，在人群中耀眼出眾，為人處事，殺伐果決，是令人生畏卻又心嚮往之的存在。
-        </th>
-
-      </tr>
-    </table>
-  </body>
 </html>
