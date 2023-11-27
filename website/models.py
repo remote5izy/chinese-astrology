@@ -15,6 +15,9 @@ except Exception as e:
 
 db = client["chinese_astronology"]
 table = db["data"]
-item = {"value": "Your mainStar & name", "_id": 66}
-# table.insert_one(item)
-table.replace_one({"_id": item["_id"]}, item)
+# item = {"value": "Your mainStar & name"}
+table.insert_one({"value": "Your mainStar & name "})
+# table.replace_one({"_id": item["_id"]}, item)
+# 检索文档的例子
+result = table.find_one({"value": "Your mainStar & name "})
+print(result)
