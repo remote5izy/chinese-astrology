@@ -1,2 +1,4 @@
-Flask==3.0.0
 pymongo
+fastapi
+uvicorn
+python-multipart
