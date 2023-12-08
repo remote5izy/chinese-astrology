@@ -15,5 +15,5 @@ myform.addEventListener("submit", async (e) => {
 
     console.log(req);
     const ans = document.getElementById("ans");
-    ans.innerText = "Hello";
+    ans.innerText = 2;
 });
