@@ -14,6 +14,6 @@ myform.addEventListener("submit", async (e) => {
     const req = await response.json();
 
     console.log(req);
-
     const ans = document.getElementById("ans");
+    ans.innerText = "Hello";
 });
