@@ -27,7 +27,6 @@ gong = [
     "夫妻宮",
     "兄弟宮",
 ]  # 命宮 父母 福德 田宅
-house = [[0 for _ in range(6)] for _ in range(12)]  # 12個 [天干, 地支, 宮, 身宮與否, 紫微星系, 天府星系]
 
 zw = ["紫微", 0, 0, 0, "廉貞", 0, 0, "天同", "武曲", "太陽", 0, "天機"]
 tf = ["天府", "太陰", "貪狼", "巨門", "天相", "天梁", "七殺", 0, 0, 0, "破軍", 0]
@@ -290,6 +289,10 @@ def fire(day):
 
 
 def createForm(year, month, day, hour):
+    house = [
+        [0 for _ in range(6)] for _ in range(12)
+    ]  # 12個 [天干, 地支, 宮, 身宮與否, 紫微星系, 天府星系]
+
     house[(1 + month + hour) % 12][3] = "身宮"
     temp = 3 + month - hour
     for i in range(12):
@@ -321,6 +324,3 @@ def createForm(year, month, day, hour):
             house[(fire(day)[1] + i) % 12][5] = tf[i]
 
     return house
-
-
-

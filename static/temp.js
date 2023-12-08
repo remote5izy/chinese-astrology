@@ -2,8 +2,11 @@ const myform = document.getElementById("calculatorForm");
 
 myform.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const formData = new FormData(myform);
 
+    const ans = document.getElementById("ans");
+    ans.innerHTML = '';
+
+    const formData = new FormData(myform);
 
     const response =
         await fetch("/grace", {
@@ -14,8 +17,6 @@ myform.addEventListener("submit", async (e) => {
     const req = await response.json();
 
     console.log(req);
-
-    const ans = document.getElementById("ans");
 
     const mingGongItem = req.find(item => item.includes("命宮"));
 
@@ -28,8 +29,8 @@ myform.addEventListener("submit", async (e) => {
         const lastTwoElements = elementsAfterMingGong.slice(-2);
 
         // 檢查最後兩個元素是否非0
-        if (lastTwoElements.every(value => value !== 0)) {
-            ans.innerText += `${lastTwoElements.join(',')}坐命\n`;
+        if (lastTwoElements.some(value => value !== 0)) {
+            ans.innerText += `${lastTwoElements.filter(value => value !== 0).join(',')}坐命\n`;
         } else {
             ans.innerText += "命宮無主星\n";
         }
