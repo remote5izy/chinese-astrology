@@ -2,65 +2,41 @@
 <html>
 
 <head>
-    <title>Your Page Title</title>
+  <title>Your Page Title</title>
 </head>
 
 <body>
-    <form id="calculatorForm">
-        <label for="year"></label>
-        <input
-          type="number"
-          name="year"
-          min="1804"
-          max="2100"
-          style="width: 100px"
-          value="2002"
-          required
-        />
-        年
-        <label for="month"></label>
-        <input
-          type="number"
-          name="month"
-          min="1"
-          max="12"
-          style="width: 100px"
-          value="8"
-          required
-        />
-        月
-        <label for="day"></label>
-        <input
-          type="number"
-          name="day"
-          min="1"
-          max="30"
-          style="width: 100px"
-          value="16"
-          required
-        />
-        日
-        <select class="form-select" name="hour" required>
-          <option value="1">子</option>
-          <option value="2" selected>丑</option>
-          <option value="3">寅</option>
-          <option value="4">卯</option>
-          <option value="5">辰</option>
-          <option value="6">巳</option>
-          <option value="7">午</option>
-          <option value="8">未</option>
-          <option value="9">申</option>
-          <option value="10">酉</option>
-          <option value="11">戌</option>
-          <option value="0">亥</option>
-        </select>
-        時
-        <button type="submit" value="Submit">submit</button>
+  <form id="calculatorForm">
+    <label for="year"></label>
+    <input type="number" name="year" id="year" min="1804" max="2100" style="width: 100px" value="2002" required />
+    年
+    <label for="month"></label>
+    <input type="number" name="month" id="month" min="1" max="12" style="width: 100px" value="8" required />
+    月
+    <label for="day"></label>
+    <input type="number" name="day" id="day" min="1" max="30" style="width: 100px" value="16" required />
+    日
+    <select class="form-select" name="hour" required>
+      <option value="1">子</option>
+      <option value="2" selected>丑</option>
+      <option value="3">寅</option>
+      <option value="4">卯</option>
+      <option value="5">辰</option>
+      <option value="6">巳</option>
+      <option value="7">午</option>
+      <option value="8">未</option>
+      <option value="9">申</option>
+      <option value="10">酉</option>
+      <option value="11">戌</option>
+      <option value="0">亥</option>
+    </select>
+    時
+    <button type="submit" value="Submit">submit</button>
 
-      </form>
-    <div id="ans">ans test</div>
-    <script type="module" src="{{url_for('static', path='temp.js')}}">
-    </script>
+  </form>
+  <div id="ans"></div>
+  <script type="module" src="{{url_for('static', path='temp.js')}}">
+  </script>
 
 </body>
 

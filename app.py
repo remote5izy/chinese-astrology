@@ -27,4 +27,4 @@ async def grace(
     hour: int = Form(...),
 ):
     result = createForm(year, month, day, hour)
-    return {"result": result}
+    return result
