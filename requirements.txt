@@ -1,5 +1,5 @@
 # pymongo
 fastapi
 uvicorn
-starlette
 Jinja2
+python-multipart
