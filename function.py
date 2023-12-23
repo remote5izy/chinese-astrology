@@ -323,4 +323,94 @@ def createForm(year, month, day, hour):
             house[(fire(day)[0] + i) % 12][4] = zw[i]
             house[(fire(day)[1] + i) % 12][5] = tf[i]
 
-    return house
+    return htmlrander(house)
+
+
+def format_value(value):
+    # 對每個值進行處理，確保它是字符串，並且過濾掉特殊字符
+    return (
+        str(value)
+        .replace("'", "")
+        .replace("[", "")
+        .replace(",", "")
+        .replace("0", "")
+        .replace("]", "")
+    )
+
+
+def htmlrander(house_data):
+    # formatted_data = "ooo".join([str(item) for item in house_data if item and item != 0])
+    # formatted_data = "ooo".join([str(item) for item in house_data if item is not None and item != 0])
+    html_str = """
+    <table style="border-collapse: collapse; margin: 0px auto; width: 15rem; padding:0px; text-align: center;">
+        <tr>
+            <td style="background-color: #f0f0f0; color: #333; padding:10px; font-family: 'Arial', sans-serif; font-size:10px; font-weight: bold;"
+                id="house6">{}</td>
+            <td style="background-color: #f0f0f0; color: #333; padding:10px; font-family: 'Arial', sans-serif; font-size:10px; font-weight: bold;"
+                id="house7">{}</td>
+            <td style="background-color: #f0f0f0; color: #333; padding:10px; font-family: 'Arial', sans-serif; font-size:10px; font-weight: bold;"
+                id="house8">{}</td>
+            <td style="background-color: #f0f0f0; color: #333; padding:10px; font-family: 'Arial', sans-serif; font-size:10px; font-weight: bold;"
+                id="house9">{}</td>
+        </tr>
+        <tr>
+            <td style="background-color: #f0f0f0; color: #333; padding:10px; font-family: 'Arial', sans-serif; font-size:10px; font-weight: bold;"
+                id="house5">{}</td>
+                <td style="color: #333; padding:10px; font-family: 'Arial', sans-serif; font-size:10px; font-weight: bold;"
+                id="house5"> </td>
+            <td style="color: #333; padding:10px; font-family: 'Arial', sans-serif; font-size:10px; font-weight: bold;"
+                id="house10"> </td>
+            <td style="background-color: #f0f0f0; color: #333; padding:10px; font-family: 'Arial', sans-serif; font-size:10px; font-weight: bold;"
+                id="house10">{}</td>
+        </tr>
+        <tr>
+            <td style="background-color: #f0f0f0; color: #333; padding:10px; font-family: 'Arial', sans-serif; font-size:10px; font-weight: bold;"
+                id="house4">{}</td>
+                <td style="color: #333; padding:10px; font-family: 'Arial', sans-serif; font-size:10px; font-weight: bold;"
+                id="house4"> </td>
+
+            <td style="color: #333; padding:10px; font-family: 'Arial', sans-serif; font-size:10px; font-weight: bold;"
+                id="house11"> </td>
+            <td style="background-color: #f0f0f0; color: #333; padding:10px; font-family: 'Arial', sans-serif; font-size:10px; font-weight: bold;"
+                id="house11">{}</td>
+        </tr>
+        <tr>
+            <td style="background-color: #f0f0f0; color: #333; padding:10px; font-family: 'Arial', sans-serif; font-size:10px; font-weight: bold;"
+                id="house3">{}</td>
+            <td style="background-color: #f0f0f0; color: #333; padding:10px; font-family: 'Arial', sans-serif; font-size:10px; font-weight: bold;"
+                id="house2">{}</td>
+            <td style="background-color: #f0f0f0; color: #333; padding:10px; font-family: 'Arial', sans-serif; font-size:10px; font-weight: bold;"
+                id="house1">{}</td>
+            <td style="background-color: #f0f0f0; color: #333; padding:10px; font-family: 'Arial', sans-serif; font-size:10px; font-weight: bold;"
+                id="house0">{}</td>
+        </tr>
+    </table>
+    """.format(
+        format_value(house_data[6]),
+        format_value(house_data[7]),
+        format_value(house_data[8]),
+        format_value(house_data[9]),
+        format_value(house_data[5]),
+        format_value(house_data[10]),
+        format_value(house_data[4]),
+        format_value(house_data[11]),
+        format_value(house_data[3]),
+        format_value(house_data[2]),
+        format_value(house_data[1]),
+        format_value(house_data[0]),
+    )
+
+    head = """<div>this is head</div>"""
+    html_str = head + html_str
+
+    return html_str
+
+
+# house_data = createForm(2002, 8, 16, 2)
+
+# # 使用 htmlrander 函數生成 HTML 字串
+# html_table = htmlrander(house_data)
+
+# # 在實際應用中，你可以將這個 HTML 字串返回給前端，由前端渲染顯示。
+# print(house_data)
+# print(html_table)
