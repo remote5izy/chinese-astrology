@@ -52,11 +52,4 @@ async def grace(
 @app.post("/cloud")
 async def grace(item: Data):
     result = createForm(item.year, item.month, item.day, item.hour)
-    for entry in result:
-        if "命宮" in entry:
-            ming_palace = entry
-
-    result = "命宮：" + str(ming_palace)
-
-    print(result)
     return result
