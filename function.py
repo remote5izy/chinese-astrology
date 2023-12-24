@@ -346,8 +346,14 @@ def createForm(year, month, day, hour, name, friend_id):
     else:
         item[name] = result
         mongo.table.replace_one({"_id": friend_id}, item)
+    
+    result = '''<h3 style="color:white">''' + result + "</h3>"
 
-    return result + htmlrander(house)
+    result = result + htmlrander(house)
+
+    print(result)
+
+    return result
 
 
 def format_value(value):
@@ -430,7 +436,7 @@ def htmlrander(house_data):
     return html_str
 
 
-# house_data = createForm(2002, 8, 16, 2,"cj;6m6p ","m6")
+house_data = createForm(2002, 8, 16, 2, "cj;6m6p ", "m6")
 
 # # 使用 htmlrander 函數生成 HTML 字串
 # html_table = htmlrander(house_data)
