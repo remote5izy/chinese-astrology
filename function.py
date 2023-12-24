@@ -347,7 +347,7 @@ def createForm(year, month, day, hour, name, friend_id):
         item[name] = result
         mongo.table.replace_one({"_id": friend_id}, item)
 
-    return htmlrander(house)
+    return result + htmlrander(house)
 
 
 def format_value(value):
@@ -424,8 +424,8 @@ def htmlrander(house_data):
         format_value(house_data[0]),
     )
 
-    head = """<div>this is head</div>"""
-    html_str = head + html_str
+    # head = """<div>this is head</div>"""
+    # html_str = head + html_str
 
     return html_str
 
