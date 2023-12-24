@@ -1,3 +1,5 @@
+from models import mongo
+
 heavenlyStemList = ["癸", "甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬"]  # 癸 甲 乙 丙
 earthlyBranchList = [
     "亥",
@@ -288,7 +290,7 @@ def fire(day):
     return [x, y]
 
 
-def createForm(year, month, day, hour):
+def createForm(year, month, day, hour, name, friend_id):
     house = [
         [0 for _ in range(6)] for _ in range(12)
     ]  # 12個 [天干, 地支, 宮, 身宮與否, 紫微星系, 天府星系]
@@ -322,6 +324,28 @@ def createForm(year, month, day, hour):
         for i in range(12):
             house[(fire(day)[0] + i) % 12][4] = zw[i]
             house[(fire(day)[1] + i) % 12][5] = tf[i]
+
+    for entry in house:
+        if "命宮" in entry:
+            if entry[4] == 0 and entry[5] == 0:
+                result = "命宮無主星"
+            elif entry[4] == 0:
+                result = str(entry[5]) + "坐命"
+            elif entry[5] == 0:
+                result = str(entry[4]) + "坐命"
+            else:
+                result = str(entry[4]) + str(entry[5]) + "坐命"
+            break
+
+    print(result)
+
+    item = mongo.table.find_one(friend_id)
+    if item is None:
+        item = {"_id": friend_id, name: result}
+        mongo.table.insert_one(item)
+    else:
+        item[name] = result
+        mongo.table.replace_one({"_id": friend_id}, item)
 
     return htmlrander(house)
 
@@ -406,7 +430,7 @@ def htmlrander(house_data):
     return html_str
 
 
-# house_data = createForm(2002, 8, 16, 2)
+# house_data = createForm(2002, 8, 16, 2,"cj;6m6p ","m6")
 
 # # 使用 htmlrander 函數生成 HTML 字串
 # html_table = htmlrander(house_data)

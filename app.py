@@ -12,6 +12,8 @@ class Data(BaseModel):
     month: int
     day: int
     hour: int
+    name: str
+    friend_id: str
 
 
 app = FastAPI(debug=True)
@@ -45,11 +47,13 @@ async def grace(
     hour: int = Form(...),
 ):
     result = createForm(year, month, day, hour)
-    
+
     return result
 
 
 @app.post("/cloud")
 async def grace(item: Data):
-    result = createForm(item.year, item.month, item.day, item.hour)
+    result = createForm(
+        item.year, item.month, item.day, item.hour, item.name, item.friend_id
+    )
     return result
