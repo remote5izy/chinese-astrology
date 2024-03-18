@@ -1,59 +1,44 @@
-from fastapi import FastAPI, Request, Form
-from fastapi.staticfiles import StaticFiles
+from fastapi import FastAPI, Form
 from pydantic import BaseModel
-from starlette.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse
-from function import createForm
-from fastapi.middleware.cors import CORSMiddleware
-
-
-class Data(BaseModel):
-    year: int
-    month: int
-    day: int
-    hour: int
-    name: str
-    friend_id: str
+from models import db
 
 
 app = FastAPI(debug=True)
-app.mount("/static/", StaticFiles(directory="static", html=True), name="static")
-templates = Jinja2Templates(directory="templates")
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 
-@app.get("/", response_class=HTMLResponse)
-async def temp(request: Request):
-    return templates.TemplateResponse("temp.html", {"request": request})
+class EditData(BaseModel):
+    id: str
+    name: str
+    content: str
 
 
-@app.get("/z", response_class=HTMLResponse)
-async def z(request: Request):
-    return templates.TemplateResponse("z.html", {"request": request})
+class DeleteData(BaseModel):
+    id: str
 
 
-@app.post("/grace")
-async def grace(
-    year: int = Form(...),
-    month: int = Form(...),
-    day: int = Form(...),
-    hour: int = Form(...),
-):
-    result = createForm(year, month, day, hour)
-
-    return result
+@app.post("/create")
+async def create_a_new_data(data:EditData):
+    item = {"id": data.id, "name": data.name, "content": data.content}
+    db.table.insert_one(item)
+    return {"message": "Data inserted successfully"}
 
 
-@app.post("/cloud")
-async def grace(item: Data):
-    result = createForm(
-        item.year, item.month, item.day, item.hour, item.name, item.friend_id
-    )
-    return result
+@app.post("/edit")
+async def edit_data(data: EditData):
+    return {"message": "Data inserted successfully"}
+
+
+@app.get("/getall")
+async def get_all_data():
+    data_list = [
+        EditData(id="1", name="Name1", content="Content1"),
+        EditData(id="2", name="Name2", content="Content2"),
+        EditData(id="3", name="Name3", content="Content3"),
+    ]
+    return data_list
+
+
+@app.post("/delete")
+async def delete_data(a: DeleteData):
+    print(a)
+    return "u"

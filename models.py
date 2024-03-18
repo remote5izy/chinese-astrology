@@ -17,11 +17,11 @@ class Mongodb():
         db = client[dbname]
         self.table = db[tablename]
 
-mongo = Mongodb("chinese_astronology","data")
+db = Mongodb("chinese_astronology","test")
 
 
-# item = {"value": "Your mainStar & name"}
-# table.insert_one(item)
+# item = {"_id": 1, "value": "Your mainStar & name"}
+# db.table.insert_one(item)
 # table.replace_one({"_id": item["_id"]}, item)
 # 检索文档的例子
 # result = table.find_one({"value": "Your mainStar & name "})
