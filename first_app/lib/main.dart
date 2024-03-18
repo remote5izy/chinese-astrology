@@ -8,7 +8,7 @@ class MainPageApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: '我的待辦事項',
+      title: '待辦事項',
       theme: ThemeData(
         primarySwatch: Colors.red,
         colorScheme: ColorScheme.fromSwatch(
